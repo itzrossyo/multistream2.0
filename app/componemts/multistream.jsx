@@ -111,7 +111,7 @@ const TEAMS = {
         {id: 14, platform: 'twitch', channel: 'skillspecs', muted: true},
         {id: 15, platform: 'twitch', channel: 'Purpp', muted: true},
         {id: 16, platform: 'twitch', channel: 'c_engineer', muted: true},
-        {id: 17, platform: 'twitch', channel: 'Sick_Nerd', muted: true},
+        {id: 17, platform: 'kick', channel: 'Sick_Nerd', muted: true},
         {id: 18, platform: 'twitch', channel: 'sparcmac', muted: true},
     ],
     B0aty_Brawlers: [
