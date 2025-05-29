@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "DDM Multistream",
+  title: "Deadman: All Stars Mutlistream",
   description: "Deadman Mode and Breach Countdown for DDM Multistream",
 };
 
