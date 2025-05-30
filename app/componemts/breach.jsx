@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Clock, Zap } from 'lucide-react';
+import { Clock, Zap, Shield } from 'lucide-react';
 
 const DeadmanModeCountdown = () => {
   const [deadmanCountdown, setDeadmanCountdown] = useState('');
@@ -169,85 +169,175 @@ const DeadmanModeCountdown = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <div className="w-full p-3">
-      <div className="bg-gray-900 rounded-lg p-4 shadow-lg border border-gray-700 max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Clock className="w-6 h-6 text-white" />
-            <h1 className="text-xl font-bold text-white">Deadman Mode Timer</h1>
-            <span className="text-sm text-gray-400">May 30 → Jun 8, 2025</span>
-          </div>
-          <div className="text-xs text-gray-400">
-            Current UTC: {new Date().toISOString().slice(0, 19).replace('T', ' ')}
-          </div>
-        </div>
+  // Helper function to extract time components for display
+  const parseCountdownTime = (countdownStr) => {
+    // Handle different time formats
+    if (countdownStr.includes('d ')) {
+      // Format: "Xd HH:MM:SS"
+      const parts = countdownStr.split(' ');
+      const timePart = parts[1] || '00:00:00';
+      const [hours, minutes, seconds] = timePart.split(':').map(Number);
+      return { hours: hours || 0, minutes: minutes || 0, seconds: seconds || 0 };
+    } else if (countdownStr.includes(':')) {
+      // Format: "HH:MM:SS" or "MM:SS"
+      const parts = countdownStr.split(':').map(Number);
+      if (parts.length === 3) {
+        return { hours: parts[0], minutes: parts[1], seconds: parts[2] };
+      } else if (parts.length === 2) {
+        return { hours: 0, minutes: parts[0], seconds: parts[1] };
+      }
+    }
+    return { hours: 0, minutes: 0, seconds: 0 };
+  };
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Deadman Mode Status */}
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className={`text-sm font-bold mb-1 ${
-                  deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'text-green-400' :
-                  deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'text-yellow-400' :
-                  'text-red-400'
+  const deadmanTime = parseCountdownTime(deadmanCountdown);
+  const breachTime = parseCountdownTime(breachCountdown);
+
+  const formatDisplayTime = (minutes, seconds) => {
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className=" bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8 max-w-6xl mx-auto">
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-white tracking-wide">DEADMAN All STARS</h1>
+        </div>
+        <div className="flex items-center gap-4">
+          
+        </div>
+      </div>
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Deadman Mode Panel */}
+          <div className="relative">
+            <div className={`absolute inset-0 ${
+              deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'bg-gradient-to-br from-green-500/20 to-emerald-600/20' :
+              deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'bg-gradient-to-br from-yellow-500/20 to-orange-600/20' :
+              'bg-gradient-to-br from-gray-500/20 to-slate-600/20'
+            } rounded-2xl blur-xl`}></div>
+            <div className={`relative bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border shadow-2xl ${
+              deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'border-green-500/30' :
+              deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'border-yellow-500/30' :
+              'border-gray-500/30'
+            }`}>
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className={`text-xs font-bold px-6 py-1 rounded-full tracking-wider ${
+                  deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'bg-green-500 text-black' :
+                  deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'bg-yellow-500 text-black' :
+                  'bg-gray-500 text-white'
                 }`}>
-                  {deadmanStatus}
-                </div>
-                <div className="text-xs text-gray-400 mb-2">
-                  {deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'Starts in:' :
-                   deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'Ends in:' :
-                   'Mode ended'}
-                </div>
-                <div className="text-xl font-mono text-white font-bold">
-                  {deadmanCountdown}
+                  {deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'ACTIVE' :
+                   deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'WAITING' : 'ENDED'}
                 </div>
               </div>
-              <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center border border-gray-600">
-                <Clock className={`w-5 h-5 ${
+              
+              <div className="text-center pt-4">
+                <div className="text-white text-lg font-medium mb-2 tracking-wide">
+                  {deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'STARTS IN' : 'TIME LEFT'}
+                </div>
+                <div className="text-7xl font-mono font-bold text-white mb-4 tracking-wider">
+                  {deadmanCountdown || '--:--'}
+                </div>
+                <div className={`text-lg font-semibold mb-6 tracking-wide ${
                   deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'text-green-400' :
                   deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'text-yellow-400' :
                   'text-gray-400'
-                }`} />
+                }`}>
+                  {deadmanStatus}
+                </div>
               </div>
+              
+              {/* Corner decorations */}
+              <div className={`absolute top-4 left-4 w-6 h-6 border-l-2 border-t-2 ${
+                deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'border-green-500/40' :
+                deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'border-yellow-500/40' :
+                'border-gray-500/40'
+              }`}></div>
+              <div className={`absolute top-4 right-4 w-6 h-6 border-r-2 border-t-2 ${
+                deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'border-green-500/40' :
+                deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'border-yellow-500/40' :
+                'border-gray-500/40'
+              }`}></div>
+              <div className={`absolute bottom-4 left-4 w-6 h-6 border-l-2 border-b-2 ${
+                deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'border-green-500/40' :
+                deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'border-yellow-500/40' :
+                'border-gray-500/40'
+              }`}></div>
+              <div className={`absolute bottom-4 right-4 w-6 h-6 border-r-2 border-b-2 ${
+                deadmanStatus === 'DEADMAN MODE ACTIVE' ? 'border-green-500/40' :
+                deadmanStatus === 'WAITING FOR DEADMAN MODE' ? 'border-yellow-500/40' :
+                'border-gray-500/40'
+              }`}></div>
             </div>
           </div>
 
-          {/* Breach Countdown */}
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className={`text-sm font-bold mb-1 ${
-                  isBreachActive ? 'text-red-400' : 'text-red-400'
+          {/* Breach Panel */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-rose-600/20 rounded-2xl blur-xl"></div>
+            <div className="relative bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border border-red-500/30 shadow-2xl">
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className={`text-xs font-bold px-6 py-1 rounded-full tracking-wider ${
+                  isBreachActive ? 'bg-red-500 text-white animate-pulse' : 'bg-red-500 text-white'
                 }`}>
-                  {isBreachActive ? 'BREACH ACTIVE' : 'NEXT BREACH'}
+                  {isBreachActive ? 'BREACH ACTIVE' : 'BREACH'}
                 </div>
-                <div className="text-xs text-gray-400 mb-2">
-                  {isBreachActive ? 'Time remaining:' : 
-                   nextBreachTime ? 'Time until breach:' : 'No more breaches'}
+              </div>
+              
+              <div className="text-center pt-4">
+                <div className="text-white text-lg font-medium mb-2 tracking-wide">
+                  {isBreachActive ? 'TIME LEFT' : 'NEXT BREACH'}
                 </div>
-                <div className={`text-xl font-mono font-bold ${
-                  isBreachActive ? 'text-red-400 animate-pulse' :
-                  breachCountdown === 'BREACH STARTING NOW!' ? 'text-red-400 animate-pulse' : 'text-white'
+                <div className={`text-7xl font-mono font-bold mb-4 tracking-wider ${
+                  isBreachActive ? 'text-red-400 animate-pulse' : 'text-white'
                 }`}>
-                  {breachCountdown}
+                  {breachCountdown || '--:--'}
                 </div>
-                {nextBreachTime && !isBreachActive && (
-                  <div className="text-xs text-gray-500 mt-1">
-                    {nextBreachTime.toISOString().slice(0, 16).replace('T', ' ')} UTC
-                  </div>
-                )}
+                <div className="text-red-400 text-lg font-semibold mb-6 tracking-wide">
+                  {isBreachActive ? 'ACTIVE' : 'DANGER'}
+                </div>
+                
+                {/* Danger indicator bars */}
+                <div className="flex justify-center items-end gap-1 mb-4 h-12">
+                  {Array.from({ length: 40 }, (_, i) => (
+                    <div
+                      key={i}
+                      className="bg-red-500 w-1.5 rounded-t-sm opacity-60"
+                      style={{
+                        height: `${Math.random() * 80 + 20}%`,
+                        animation: `pulse ${0.5 + Math.random() * 1}s infinite`
+                      }}
+                    ></div>
+                  ))}
+                </div>
+                
+                <div className="text-red-400 text-sm font-semibold tracking-widest">DANGER</div>
               </div>
-              <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center border border-gray-600">
-                <Zap className={`w-5 h-5 ${
-                  isBreachActive ? 'text-red-400 animate-pulse' :
-                  breachCountdown === 'BREACH STARTING NOW!' ? 'text-red-400' :
-                  nextBreachTime ? 'text-orange-400' : 'text-gray-400'
-                }`} />
-              </div>
+              
+              {/* Corner decorations */}
+              <div className="absolute top-4 left-4 w-6 h-6 border-l-2 border-t-2 border-red-500/40"></div>
+              <div className="absolute top-4 right-4 w-6 h-6 border-r-2 border-t-2 border-red-500/40"></div>
+              <div className="absolute bottom-4 left-4 w-6 h-6 border-l-2 border-b-2 border-red-500/40"></div>
+              <div className="absolute bottom-4 right-4 w-6 h-6 border-r-2 border-b-2 border-red-500/40"></div>
             </div>
           </div>
+        </div>
+
+        {/* Grid background effect */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent"></div>
+          <div 
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `
+                linear-gradient(rgba(6, 182, 212, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.3) 1px, transparent 1px)
+              `,
+              backgroundSize: '50px 50px'
+            }}
+          ></div>
         </div>
       </div>
     </div>

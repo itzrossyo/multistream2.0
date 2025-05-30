@@ -192,11 +192,9 @@ const MultiStreamViewer = () => {
     };
 
     return (
-        <div className="min-h-screen p-4 bg-black">
+        <div className=" bg-gradient-to-br from-slate-800 via-slate-900 to-slate-8 p-6">
             {/* Header */}
             <div className="mb-6">
-                <h1 className="text-3xl font-bold text-white  mb-4">Multi-Stream Viewer</h1>
-
                 {/* Team Selector */}
                 <div className="flex flex-wrap justify-center  gap-2 mb-4">
                     {Object.keys(TEAMS).map((team) => (
