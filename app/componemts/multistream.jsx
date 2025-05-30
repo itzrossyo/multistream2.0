@@ -91,8 +91,8 @@ const TEAMS = {
         {id: 1, platform: 'kick', channel: 'Odablock ', muted: true},
         {id: 2, platform: 'kick', channel: 'Rhys', muted: true},
         {id: 3, platform: 'twitch', channel: 'muts', muted: true},
-        {id: 10, platform: 'kick', channel: 'Mikars', muted: true},
-        {id: 11, platform: 'twitch', channel: 'Muts', muted: true}
+        {id: 10, platform: 'twitch', channel: 'Mikars', muted: true},
+        {id: 11, platform: 'twitch', channel: 'mmorpg', muted: true}
 
     ],
     SoloMissionSnakes: [
